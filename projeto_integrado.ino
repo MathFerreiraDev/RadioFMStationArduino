@@ -36,6 +36,7 @@ byte test2;
 //TEA5767Radio radio = TEA5767Radio();
 
 int level_radio = 80;
+
 bool trava_sessao = false;
 int disp_pinos[7] = {6, 7, 8, 9, 10, 11, 13};
 int digitos[11][7] = {
@@ -86,6 +87,7 @@ void digito(int d){
     }
 }
 
+int potenciometro_anterior = -1;
 void loop()
 {
   bool buttonState = digitalRead(BOTAO);
@@ -112,7 +114,7 @@ void loop()
  int valor_potenciometro = map(analogRead(ANALOG_POTEN), 0, 1023, 0, 101);
  int unidade_estacao = (valor_potenciometro / 10) % 10 ;
 
- 
+ if(valor_potenciometro != potenciometro_anterior){
  radio.setMute(false);
   
   if(valor_potenciometro != 100 && valor_potenciometro != 0 && trava_sessao == true ){
@@ -237,9 +239,13 @@ void loop()
  
   //SALTO DE DEZENA 80-90-100
   
-  
   }
+  potenciometro_anterior = valor_potenciometro;
+  }
+
+  
   }else{
+    potenciometro_anterior = -1;
     radio.setMute(true);
     digito(10);
     digitalWrite(EXIBER_1, LOW);
@@ -248,4 +254,6 @@ void loop()
         analogWrite(SINC_AZUL, 0);
         analogWrite(SINC_VERMELHO, 0);
     }
+
+    
 }
